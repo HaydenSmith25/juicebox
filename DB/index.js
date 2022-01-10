@@ -78,7 +78,7 @@ async function getUserById(userId) {
     return;
   }
 
-  const posts = getPostsByUser(user.id);
+  const posts = await getPostsByUser(user.id);
 
   user.posts = posts;
 
@@ -87,13 +87,15 @@ async function getUserById(userId) {
 
 //POSTS
 
-async function createPost({ authorID, title, content }) {
+async function createPost({ authorId, title, content }) {
   try {
-    const { post } = await client.query(
-      `INSERT INTO users(authorID, title, content) 
+    const {
+      rows: [post],
+    } = await client.query(
+      `INSERT INTO users("authorId", title, content) 
         VALUES ($1, $2, $3) 
          RETURNING *;`,
-      [authorID, title, content]
+      [authorId, title, content]
     );
 
     return post;
@@ -147,7 +149,7 @@ async function getAllPosts() {
 
 async function getPostsByUser(userId) {
   try {
-    const { rows } = client.query(`
+    const { rows } = await client.query(`
     SELECT * FROM posts
     WHERE "authorId"=${userId};`);
 
