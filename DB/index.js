@@ -244,6 +244,13 @@ async function getPostById(postId) {
       [postId]
     );
 
+    if (!post) {
+      throw {
+        name: "PostNotFoundError",
+        message: "Could not find post",
+      };
+    }
+
     // select the tags from a particular post
     // by joining all tags in the tags table
     // on all post_tags records in the post_tags through table
